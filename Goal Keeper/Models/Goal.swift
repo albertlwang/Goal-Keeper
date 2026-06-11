@@ -8,7 +8,10 @@
 import Foundation
 import SwiftData
 
-/// Database definition that stores all historical goal logs.
+/// Defines Goal object.
+/// This is what SwiftData stores for historical logs.
+/// Current active Goal = whatever goal that has date = Date() --> mutate throughout the day.
+/// ENFORCE: can only mutate active goal (historical logs should be static).
 @Model
 class GoalLog {
     var date: Date
@@ -18,19 +21,11 @@ class GoalLog {
     var completedAt: Date?
     var isModified: Bool
     
-    init (date: Date, goal: String, isCompleted: Bool, completedAt: Date?, isModified: Bool) {
+    init (date: Date, goal: String) {
         self.date = date
         self.goal = goal
-        self.isCompleted = isCompleted
-        self.completedAt = completedAt
-        self.isModified = isModified
+        self.isCompleted = false
+        self.completedAt = nil
+        self.isModified = false
     }
-}
-
-/// Object representing a currently active goal.
-/// Convert to GoalLog shape upon EOD.
-struct ActiveGoal {
-    let date: Date
-    let goal: String
-    let isCompleted: Bool
 }
