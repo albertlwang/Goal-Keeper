@@ -16,6 +16,8 @@ struct Goal_KeeperApp: App {
         WindowGroup {
             ContentView()
                 .environment(dataContainer)
+                .environment(StateManager.shared)
+                .environment(AppSettings.shared)
         }
         .modelContainer(dataContainer.modelContainer)
     }
