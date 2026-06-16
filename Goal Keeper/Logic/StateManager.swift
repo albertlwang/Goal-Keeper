@@ -25,6 +25,7 @@ final class StateManager {
     private init() {
         loadState()
         startClock()
+        // observeSettings()
     }
 }
 
@@ -49,15 +50,18 @@ extension StateManager {
     }
     
     private func updatePhase() {
+        print("Updating phase.")
         let next: AppPhase
         let endsAt: Date
         
         if inActiveWindow {
             next = .active
             endsAt = nextEOD
+            print("Transitioning to active. EOD = \(nextEOD)")
         } else {
             next = .awaiting
             endsAt = nextSOD
+            print("Transitioning to awaiting. SOD = \(nextSOD)")
         }
         
         currentPhase = next
@@ -81,13 +85,52 @@ extension StateManager {
             timeRemaining = remaining
         }
     }
+    
+    /// Observes AppSettings for user changes to EOD.
+    /// On change, executes handleSettingsChange().
+//    private func observeSettings() {
+//        withObservationTracking {
+//            _ = AppSettings.shared.endOfDay
+//        } onChange: { [weak self] in
+//            Task { @MainActor [weak self] in
+//                self?.handleSettingsChange()
+//                self?.observeSettings()  // re-register, since onChange detatches after firing
+//            }
+//        }
+//    }
+    
+//    private func handleSettingsChange() {
+//        // Recompute endTime for the current phase mid-flight
+//        let calendar = Calendar.current
+//        let settings = AppSettings.shared
+//        
+//        switch currentPhase {
+//        case .active:
+//            // Set EOD to today, even if it's in the past - tick() will catch
+//            endTime = calendar.date(
+//                bySettingHour: settings.endOfDay.hour ?? 22,
+//                minute: settings.endOfDay.minute ?? 0,
+//                second: 0,
+//                of: .now
+//            ) ?? .now
+//            
+//        case .awaiting:
+//            endTime = calendar.date(
+//                bySettingHour: settings.startOfDay.hour ?? 7,
+//                minute: settings.startOfDay.minute ?? 0,
+//                second: 0,
+//                of: .now
+//            ) ?? .now
+//        }
+//        
+//        saveState()
+//    }
 }
 
 // MARK: - Helpers
 extension StateManager {
     private var nextEOD: Date {
-        let settings = AppSettings.shared
-        let components = settings.endOfDay
+        let components = AppSettings.shared.endOfDay
         
         return Calendar.current.nextDate(
             after: .now,
@@ -97,8 +140,7 @@ extension StateManager {
     }
     
     private var nextSOD: Date {
-        let settings = AppSettings.shared
-        let components = settings.startOfDay
+        let components = AppSettings.shared.startOfDay
         
         return Calendar.current.nextDate(
             after: .now,

@@ -23,3 +23,31 @@ struct SettingsData: Codable {
         return DateComponents(hour: hours, minute: endOfDay.minute!)
     }
 }
+
+extension DateComponents {
+    func formatted() -> String {
+        let calendar = Calendar.current
+        let date = calendar.date(from: self)!
+        
+        let formatter = DateFormatter()
+        formatter.dateFormat = "h:mma"  // h = 12-hour, mm = minutes, a = AM/PM
+        formatter.amSymbol = "am"
+        formatter.pmSymbol = "pm"
+        
+        return formatter.string(from: date)
+    }
+}
+
+extension TimeInterval {
+    var hoursAndMinutes: String {
+        let total = Int(self)
+        let h = total / 3600
+        let m = (total % 3600) / 60
+
+        switch (h, m) {
+        case (0, let m): return "\(m)m"
+        case (let h, 0): return "\(h)h"
+        case (let h, let m): return "\(h)h \(m)m"
+        }
+    }
+}

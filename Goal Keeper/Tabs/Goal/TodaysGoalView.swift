@@ -8,15 +8,15 @@
 import SwiftUI
 
 struct TodaysGoalView: View {
+    @Environment(StateManager.self) private var stateManager
     @State var isFinished: Bool = false
-    
     
     var body: some View {
         NavigationStack {
             /// Content
             VStack(alignment: .leading) {
                 
-                Text("Wed Jun 11")
+                Text(Date.now.formatted(.dateTime.weekday(.abbreviated).month(.abbreviated).day()))
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                 
@@ -31,7 +31,7 @@ struct TodaysGoalView: View {
                     
                     VStack {
                         FinishButton(isFinished: $isFinished) {}
-                        Text("3h 21m left")
+                        Text("\(stateManager.timeRemaining.hoursAndMinutes) left")
                             .font(.caption)
                             .foregroundColor(.secondary.opacity(isFinished ? 0 : 1))
                     }

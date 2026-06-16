@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ContentView: View {
+    @Environment(StateManager.self) private var stateManager
+    
     var body: some View {
         TabView {
             Tab("Goal", systemImage: "trophy.fill") {
@@ -15,11 +17,11 @@ struct ContentView: View {
             }
             
             Tab("History", systemImage: "calendar") {
-                Text("History")
+                Text(stateManager.currentPhase.rawValue)
             }
             
             Tab("Settings", systemImage: "gearshape") {
-                Text("Settings")
+                SettingsView()
             }
         }
     }

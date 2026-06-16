@@ -8,14 +8,15 @@
 import SwiftUI
 
 struct GoalView: View {
-    let pastDeadline: Bool = false
+    @Environment(StateManager.self) private var stateManager
     
     var body: some View {
-        if pastDeadline {
-            SetGoalView()
-        } else {
-            TodaysGoalView()
+        
+        switch stateManager.currentPhase {
+        case .active: TodaysGoalView()
+        case .awaiting: SetGoalView()
         }
+        
     }
 }
 

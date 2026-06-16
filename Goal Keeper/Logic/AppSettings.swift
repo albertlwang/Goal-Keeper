@@ -17,14 +17,6 @@ final class AppSettings {
         didSet { save() }
     }
     
-    var endOfDay: DateComponents {
-        get { data.endOfDay }
-        set { data.endOfDay = newValue }
-    }
-    var startOfDay: DateComponents {
-        get { data.startOfDay }
-    }
-    
     private init() {
         if let stored = UserDefaults.standard.data(forKey: Self.key),
            let decoded = try? JSONDecoder().decode(SettingsData.self, from: stored) {
@@ -34,6 +26,20 @@ final class AppSettings {
         }
     }
     
+    // MARK: - Interface
+    
+    var endOfDay: DateComponents {
+        get { data.endOfDay }
+        set { data.endOfDay = newValue }
+    }
+    
+    var startOfDay: DateComponents {
+        get { data.startOfDay }
+    }
+    
+    
+    // MARK: - Private Functions
+    
     private func save() {
         if let encoded = try? JSONEncoder().encode(data) {
             UserDefaults.standard.set(encoded, forKey: Self.key)
@@ -42,5 +48,22 @@ final class AppSettings {
     
     func reset() {
         data = SettingsData()
+    }
+}
+
+extension AppSettings {
+    // Converts DateComponents <-> Date for DatePicker binding
+    var endOfDayAsDate: Date {
+        get {
+            Calendar.current.date(from: data.endOfDay)
+            ?? Calendar.current.date(bySettingHour: data.endOfDay.hour ?? 22,
+                                     minute: data.endOfDay.minute ?? 0,
+                                     second: 0, of: .now)
+            ?? .now
+        }
+        set {
+            let components = Calendar.current.dateComponents([.hour, .minute], from: newValue)
+            data.endOfDay = components
+        }
     }
 }
