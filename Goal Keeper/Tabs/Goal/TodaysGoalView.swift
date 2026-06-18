@@ -6,10 +6,16 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct TodaysGoalView: View {
     @Environment(StateManager.self) private var stateManager
-    @State var isFinished: Bool = false
+    @Environment(DataContainer.self) private var data
+    
+    @Query private var activeGoals: [ActiveGoal]
+    private var activeGoal: ActiveGoal? { activeGoals.first }
+    
+    @State private var isEditing: Bool = false
     
     var body: some View {
         NavigationStack {
@@ -22,7 +28,10 @@ struct TodaysGoalView: View {
                 
                 Spacer()
                 
-                GoalNameText(text: "Take out the trash.", isFinished: isFinished)
+                GoalNameText()
+                    .onAppear {
+                        // try? data.setNewActiveGoal(nil)
+                    }
                 
                 Spacer()
                 
@@ -30,15 +39,16 @@ struct TodaysGoalView: View {
                     Spacer()
                     
                     VStack {
-                        FinishButton(isFinished: $isFinished) {}
+                        FinishButton()
                         Text("\(stateManager.timeRemaining.hoursAndMinutes) left")
                             .font(.caption)
-                            .foregroundColor(.secondary.opacity(isFinished ? 0 : 1))
+                            .foregroundColor(.secondary.opacity(
+                                activeGoal == nil || activeGoal!.isCompleted ? 0 : 1
+                            ))
                     }
                     
                     Spacer()
                 }
-                
                 
                 Spacer()
   
@@ -50,8 +60,16 @@ struct TodaysGoalView: View {
             .navigationTitle("Today's Goal")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Image(systemName: "square.and.pencil")
+                    Button {
+                        isEditing = true
+                    } label: {
+                        Image(systemName: "square.and.pencil")
+                    }
+                    .disabled(activeGoal != nil && activeGoal!.isCompleted)
                 }
+            }
+            .sheet(isPresented: $isEditing) {
+                EditTodaysGoalView()
             }
         }
     }

@@ -6,20 +6,29 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct GoalNameText: View {
-    let text: String
-    let isFinished: Bool
+    @Query private var activeGoals: [ActiveGoal]
+    
+    private var activeGoal: ActiveGoal? { activeGoals.first }
     
     var body: some View {
-        Text(text)
-            .fontWeight(.medium)
-            .padding(.bottom, 20)
-            .strikethrough(isFinished)
-            .foregroundColor(isFinished ? .green : .primary)
+        if let activeGoal {
+            Text(activeGoal.goal)
+                .fontWeight(.medium)
+                .padding(.bottom, 20)
+                .strikethrough(activeGoal.isCompleted)
+                .foregroundColor(activeGoal.isCompleted ? .green : .primary)
+        } else {
+            Text("No goal set yet.")
+                .fontWeight(.medium)
+                .padding(.bottom, 20)
+                .foregroundColor(.primary.opacity(0.5))
+        }
     }
 }
 
 #Preview {
-    GoalNameText(text: "Take out the trash.", isFinished: false)
+    GoalNameText()
 }

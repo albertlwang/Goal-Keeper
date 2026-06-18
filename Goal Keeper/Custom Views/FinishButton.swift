@@ -6,21 +6,25 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct FinishButton: View {
-    @Binding var isFinished: Bool
-    let onTap: () -> Void
+    @Environment(DataContainer.self) private var data
+    @Query private var activeGoals: [ActiveGoal]
+    
+    private var activeGoal: ActiveGoal? { activeGoals.first }
     
     var body: some View {
         Button {
-            
-            isFinished = true
-            onTap()
+            if let activeGoal {
+                activeGoal.isCompleted = true
+                try? data.context.save()
+            }
             
         } label: {
             VStack {
                 
-                if !isFinished {
+                if activeGoal == nil || !activeGoal!.isCompleted {
                     Text("Finish")
                 } else {
                     Image(systemName: "checkmark.circle")
@@ -37,12 +41,11 @@ struct FinishButton: View {
                 
             }
         }
-        .disabled(isFinished)
+        .disabled(activeGoal == nil || activeGoal!.isCompleted)
         .buttonStyle(.plain)
     }
 }
 
 #Preview {
-    @State @Previewable var isFinished: Bool = false
-    FinishButton(isFinished: $isFinished) {}
+    // FinishButton()
 }

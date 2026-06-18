@@ -17,7 +17,7 @@ class DataContainer {
     var context: ModelContext { modelContainer.mainContext }
     
     init(includeSampleData: Bool = false) {
-        let schema = Schema([GoalLog.self])
+        let schema = Schema([GoalLog.self, ActiveGoal.self])
         
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: includeSampleData)
         
@@ -40,6 +40,26 @@ class DataContainer {
         context.insert(newGoal)
         try context.save()
     }
+    
+    var activeGoal: ActiveGoal? {
+        let descriptor = FetchDescriptor<ActiveGoal>()
+        return try? context.fetch(descriptor).first
+    }
+    
+    func setNewActiveGoal(_ newActiveGoal: ActiveGoal?) throws {
+        // Delete any existing instance
+        let existing = try context.fetch(FetchDescriptor<ActiveGoal>())
+        existing.forEach { context.delete($0) }
+        
+        // Insert the new one if provided
+        if let newActiveGoal {
+            context.insert(newActiveGoal)
+        }
+        
+        try context.save()
+    }
+    
+    // MARK: - Sample Data
     
     private func loadSampleData() {
         for goal in GoalLog.sampleData {

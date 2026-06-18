@@ -32,25 +32,21 @@ class GoalLog {
 
 @Model
 class ActiveGoal {
-    var goal: String?
+    var goal: String
     var createdAt: Date
-    var expiresAt: Date
     var isCompleted: Bool
     var completedAt: Date?
     var isModified: Bool
     var summaryShown: Bool
     
-    init(goal: String?, createdAt: Date, expiresAt: Date) {
+    init(goal: String) {
         self.goal = goal
-        self.createdAt = createdAt
-        self.expiresAt = expiresAt
+        self.createdAt = .now
         self.isCompleted = false
         self.completedAt = nil
         self.isModified = false
         self.summaryShown = false
     }
-    
-    var isExpired: Bool { Date.now > expiresAt }
 }
 
 extension GoalLog {
