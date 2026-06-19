@@ -17,7 +17,7 @@ struct ContentView: View {
             }
             
             Tab("History", systemImage: "calendar") {
-                Text(stateManager.currentPhase.rawValue)
+                HistoryView()
             }
             
             Tab("Settings", systemImage: "gearshape") {

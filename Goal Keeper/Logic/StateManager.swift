@@ -59,6 +59,7 @@ extension StateManager {
             endsAt = nextEOD
             print("Transitioning to active. EOD = \(nextEOD)")
         } else {
+            expireActiveGoal()
             next = .awaiting
             endsAt = nextSOD
             print("Transitioning to awaiting. SOD = \(nextSOD)")
@@ -84,6 +85,22 @@ extension StateManager {
         } else {
             timeRemaining = remaining
         }
+    }
+    
+    private func expireActiveGoal() {
+        if let activeGoal = DataContainer.shared.activeGoal {
+            // Save a log to history
+            let newGoalLog = GoalLog (
+                date: .now,
+                goal: activeGoal.goal,
+                isCompleted: activeGoal.isCompleted,
+                completedAt: activeGoal.completedAt,
+                isModified: activeGoal.isModified
+            )
+            try? DataContainer.shared.insertGoalLog(newGoalLog)
+        }
+        // Reset active goal
+        try? DataContainer.shared.setNewActiveGoal(nil)
     }
     
     /// Observes AppSettings for user changes to EOD.
