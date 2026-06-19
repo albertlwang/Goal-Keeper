@@ -13,8 +13,13 @@ struct HistoryView: View {
     
     var body: some View {
         NavigationStack {
-            logItems
-                .navigationTitle("History")
+            if goals.isEmpty {
+                placeholder
+                    .navigationTitle("History")
+            } else {
+                logItems
+                    .navigationTitle("History")
+            }
         }
     }
     
@@ -30,6 +35,19 @@ struct HistoryView: View {
             }
         }
         .navigationLinkIndicatorVisibility(.hidden)
+    }
+    
+    private var placeholder: some View {
+        VStack(alignment: .center) {
+            Spacer()
+            
+            Text("No history yet. Set a goal at night to start tracking.")
+                .multilineTextAlignment(.center)
+                .foregroundColor(.secondary)
+                
+            Spacer()
+        }
+        .padding(20)
     }
 }
 

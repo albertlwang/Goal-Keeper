@@ -12,6 +12,8 @@ import SwiftUI
 @Observable
 @MainActor
 class DataContainer {
+    static let shared = DataContainer()
+    
     let modelContainer: ModelContainer
     
     var context: ModelContext { modelContainer.mainContext }

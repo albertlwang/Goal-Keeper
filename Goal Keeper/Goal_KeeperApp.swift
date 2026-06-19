@@ -10,15 +10,14 @@ import SwiftData
 
 @main
 struct Goal_KeeperApp: App {
-    let dataContainer = DataContainer()
     
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environment(dataContainer)
+                .environment(DataContainer.shared)
                 .environment(StateManager.shared)
                 .environment(AppSettings.shared)
         }
-        .modelContainer(dataContainer.modelContainer)
+        .modelContainer(DataContainer.shared.modelContainer)
     }
 }
