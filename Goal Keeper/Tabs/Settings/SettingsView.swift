@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct SettingsView: View {
+    @Environment(DataContainer.self) private var data
+    
     @Environment(AppSettings.self) private var settings
     @State private var isEditingEOD = false
     @State private var eodDraft: Date = .now
@@ -70,6 +72,29 @@ struct SettingsView: View {
                         Spacer()
                         Text(settings.startOfDay.formatted())
                             .foregroundColor(.primary.opacity(0.5))
+                    }
+                    
+                    Section(header: Text("Debug")) {
+                        Button("Clear active goal") {
+                            try? data.setNewActiveGoal(nil)
+                        }
+                        .buttonStyle(.plain)
+                        .foregroundColor(.accentColor)
+                        
+                        Button("Print active goal") {
+                            if let activeGoal = data.activeGoal {
+                                print(
+                                    activeGoal.goal,
+                                    activeGoal.createdAt,
+                                    activeGoal.isCompleted,
+                                    activeGoal.completedAt ?? "nil",
+                                    activeGoal.isModified,
+                                    activeGoal.summaryShown
+                                )
+                            }
+                        }
+                        .buttonStyle(.plain)
+                        .foregroundColor(.accentColor)
                     }
                 }
             }
