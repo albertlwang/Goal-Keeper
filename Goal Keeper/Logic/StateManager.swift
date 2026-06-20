@@ -59,11 +59,12 @@ extension StateManager {
             endsAt = nextEOD
             print("Transitioning to active. EOD = \(nextEOD)")
         } else {
-            expireActiveGoal()
             next = .awaiting
             endsAt = nextSOD
             print("Transitioning to awaiting. SOD = \(nextSOD)")
         }
+        
+        expireActiveGoal()
         
         currentPhase = next
         endTime = endsAt
