@@ -48,16 +48,15 @@ struct EditTodaysGoalView: View {
                 }
                 
                 ToolbarItem(placement: .confirmationAction) {
-                    Button {
+                    Button(role: .confirm) {
                         if let activeGoal {
                             activeGoal.goal = newGoalDraft
                         } else {
                             let newGoal = ActiveGoal(goal: newGoalDraft)
                             try? data.setNewActiveGoal(newGoal)
                         }
+                        activeGoal?.isModified = true
                         dismiss()
-                    } label: {
-                        Image(systemName: "checkmark")
                     }
                 }
             }
