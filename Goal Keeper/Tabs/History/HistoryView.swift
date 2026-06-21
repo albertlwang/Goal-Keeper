@@ -9,13 +9,13 @@ import SwiftUI
 import SwiftData
 
 struct HistoryView: View {
-    @Query(sort: \GoalLog.date) private var goals: [GoalLog]
+    @Query(sort: \GoalLog.date) private var logs: [GoalLog]
     
     
     var body: some View {
         NavigationStack {
             Group {
-                if goals.isEmpty { placeholder }
+                if logs.isEmpty { placeholder }
                 else { logItems }
             }
             .navigationTitle("History")
@@ -26,11 +26,11 @@ struct HistoryView: View {
     
     private var logItems: some View {
         List {
-            ForEach(goals) { goal in
+            ForEach(logs) { log in
                 NavigationLink {
-                    GoalView()
+                    LogDetailView(log: log)
                 } label: {
-                    HistoryRowView(goal: goal)
+                    HistoryRowView(log: log)
                 }
                 .buttonStyle(.plain)
             }

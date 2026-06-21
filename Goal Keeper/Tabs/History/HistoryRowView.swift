@@ -8,18 +8,18 @@
 import SwiftUI
 
 struct HistoryRowView: View {
-    let goal: GoalLog
+    let log: GoalLog
     
     
     var body: some View {
         HStack(alignment: .top) {
             icon
 
-            Text(goal.date, style: .date)
+            Text(log.date, style: .date)
             
             Spacer()
             
-            Text(goal.title)
+            Text(log.title)
                 .multilineTextAlignment(.trailing)
         }
     }
@@ -27,17 +27,17 @@ struct HistoryRowView: View {
     // MARK: - Computed Properties
     
     private var color: Color {
-        if goal.isModified { return .yellow }
-        if goal.isCompleted { return .green }
+        if log.isModified { return .yellow }
+        if log.isCompleted { return .green }
         return .gray
     }
     
     private var icon: some View {
-        Image(systemName: goal.isCompleted ? "checkmark" : "xmark")
+        Image(systemName: log.isCompleted ? "checkmark" : "xmark")
             .foregroundColor(color)
     }
 }
 
 #Preview {
-    HistoryRowView(goal: GoalLog.sample)
+    HistoryRowView(log: GoalLog.sample)
 }
