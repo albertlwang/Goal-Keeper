@@ -93,56 +93,15 @@ extension StateManager {
             // Save a log to history
             let newGoalLog = GoalLog (
                 date: .now,
-                goal: activeGoal.goal,
+                title: activeGoal.title,
                 isCompleted: activeGoal.isCompleted,
                 completedAt: activeGoal.completedAt,
                 isModified: activeGoal.isModified
             )
             try? DataContainer.shared.insertGoalLog(newGoalLog)
         }
-        // Reset active goal
-        try? DataContainer.shared.setNewActiveGoal(nil)
+        try? DataContainer.shared.clearCurrentActiveGoal()
     }
-    
-    /// Observes AppSettings for user changes to EOD.
-    /// On change, executes handleSettingsChange().
-//    private func observeSettings() {
-//        withObservationTracking {
-//            _ = AppSettings.shared.endOfDay
-//        } onChange: { [weak self] in
-//            Task { @MainActor [weak self] in
-//                self?.handleSettingsChange()
-//                self?.observeSettings()  // re-register, since onChange detatches after firing
-//            }
-//        }
-//    }
-    
-//    private func handleSettingsChange() {
-//        // Recompute endTime for the current phase mid-flight
-//        let calendar = Calendar.current
-//        let settings = AppSettings.shared
-//        
-//        switch currentPhase {
-//        case .active:
-//            // Set EOD to today, even if it's in the past - tick() will catch
-//            endTime = calendar.date(
-//                bySettingHour: settings.endOfDay.hour ?? 22,
-//                minute: settings.endOfDay.minute ?? 0,
-//                second: 0,
-//                of: .now
-//            ) ?? .now
-//            
-//        case .awaiting:
-//            endTime = calendar.date(
-//                bySettingHour: settings.startOfDay.hour ?? 7,
-//                minute: settings.startOfDay.minute ?? 0,
-//                second: 0,
-//                of: .now
-//            ) ?? .now
-//        }
-//        
-//        saveState()
-//    }
 }
 
 // MARK: - Helpers

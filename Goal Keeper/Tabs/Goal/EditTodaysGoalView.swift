@@ -8,62 +8,66 @@
 import SwiftUI
 import SwiftData
 
+/// Handles modifications to the current active goal.
+/// Presented as a sheet.
 struct EditTodaysGoalView: View {
-    @State private var newGoalDraft = ""
+    @Environment(DataContainer.self) private var data
     @Environment(\.dismiss) private var dismiss
     
     @Query private var activeGoals: [ActiveGoal]
-    @Environment(DataContainer.self) private var data
-    
     private var activeGoal: ActiveGoal? { activeGoals.first }
     
+    @State private var newTitle = ""
+    
+    // MARK: - Body
+    
     var body: some View {
-        let currentGoalText = activeGoal != nil ? activeGoal!.goal : "Enter goal"
-        
         NavigationStack {
-            /// Content
-            VStack(alignment: .leading) {
-                
-                TextField(currentGoalText, text: $newGoalDraft)
-                    .textFieldStyle(.roundedBorder)
-                
-                Spacer()
-  
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 20)
-            
-            /// Toolbar
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(systemName: "xmark")
-                    }
+            goalInput
+                .toolbar {
+                    cancelButton
+                    titleLabel
+                    confirmButton
                 }
-                
-                ToolbarItem(placement: .principal) {
-                    Text("Edit Goal")
-                }
-                
-                ToolbarItem(placement: .confirmationAction) {
-                    Button(role: .confirm) {
-                        if let activeGoal {
-                            activeGoal.goal = newGoalDraft
-                        } else {
-                            let newGoal = ActiveGoal(goal: newGoalDraft)
-                            try? data.setNewActiveGoal(newGoal)
-                        }
-                        activeGoal?.isModified = true
-                        dismiss()
-                    }
-                }
+        }
+    }
+    
+    // MARK: - Subviews
+    
+    private var goalInput: some View {
+        VStack(alignment: .leading) {
+            TextField(activeGoal?.title ?? "Enter title", text: $newTitle)
+                .textFieldStyle(.roundedBorder)
+            Spacer()
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 20)
+    }
+    
+    // MARK: - Toolbar
+    
+    private var cancelButton: some ToolbarContent {
+        ToolbarItem(placement: .cancellationAction) {
+            Button {
+                dismiss()
+            } label: {
+                Image(systemName: "xmark")
             }
         }
     }
-}
-
-#Preview {
-    // EditTodaysGoalView()
+    
+    private var titleLabel: some ToolbarContent {
+        ToolbarItem(placement: .principal) {
+            Text("Edit Goal")
+        }
+    }
+    
+    private var confirmButton: some ToolbarContent {
+        ToolbarItem(placement: .confirmationAction) {
+            Button(role: .confirm) {
+                data.modifyCurrentActiveGoal(title: newTitle)
+                dismiss()
+            }
+        }
+    }
 }

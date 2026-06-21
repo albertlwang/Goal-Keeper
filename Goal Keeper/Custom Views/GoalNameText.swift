@@ -15,7 +15,7 @@ struct GoalNameText: View {
     
     var body: some View {
         if let activeGoal {
-            Text(activeGoal.goal)
+            Text(activeGoal.title)
                 .fontWeight(.medium)
                 .padding(.bottom, 20)
                 .strikethrough(activeGoal.isCompleted)

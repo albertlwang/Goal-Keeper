@@ -17,60 +17,64 @@ struct TodaysGoalView: View {
     
     @State private var isEditing: Bool = false
     
+    
     var body: some View {
         NavigationStack {
             /// Content
             VStack(alignment: .leading) {
-                
-                Text(Date.now.formatted(.dateTime.weekday(.abbreviated).month(.abbreviated).day()))
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
+                dateContext
                 
                 Spacer()
                 
                 GoalNameText()
-                    .onAppear {
-                        // try? data.setNewActiveGoal(nil)
-                    }
                 
                 Spacer()
                 
-                HStack {
-                    Spacer()
-                    
-                    VStack {
-                        FinishButton()
-                        Text("\(stateManager.timeRemaining.hoursAndMinutes) left")
-                            .font(.caption)
-                            .foregroundColor(.secondary.opacity(
-                                activeGoal == nil || activeGoal!.isCompleted ? 0 : 1
-                            ))
-                    }
-                    
-                    Spacer()
-                }
+                finishButton
                 
                 Spacer()
-  
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 20)
             
             /// Toolbar
             .navigationTitle("Today's Goal")
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        isEditing = true
-                    } label: {
-                        Image(systemName: "square.and.pencil")
-                    }
-                    .disabled(activeGoal != nil && activeGoal!.isCompleted)
-                }
+            .toolbar { editButton }
+            .sheet(isPresented: $isEditing) { EditTodaysGoalView() }
+        }
+    }
+    
+    // MARK: - Subviews
+    
+    private var dateContext: some View {
+        Text(Date.now.formatted(.dateTime.weekday(.abbreviated).month(.abbreviated).day()))
+            .font(.subheadline)
+            .foregroundColor(.secondary)
+    }
+    
+    private var finishButton: some View {
+        HStack {
+            Spacer()
+            VStack {
+                FinishButton()
+                Text("\(stateManager.timeRemaining.hoursAndMinutes) left")
+                    .font(.caption)
+                    .foregroundColor(.secondary.opacity(
+                        activeGoal == nil || activeGoal!.isCompleted ? 0 : 1
+                    ))
             }
-            .sheet(isPresented: $isEditing) {
-                EditTodaysGoalView()
+            Spacer()
+        }
+    }
+    
+    private var editButton: some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            Button {
+                isEditing = true
+            } label: {
+                Image(systemName: "square.and.pencil")
             }
+            .disabled(activeGoal != nil && activeGoal!.isCompleted)
         }
     }
 }

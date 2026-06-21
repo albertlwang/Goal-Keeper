@@ -15,15 +15,15 @@ import SwiftData
 @Model
 class GoalLog {
     var date: Date
-    var goal: String
+    var title: String
     
     var isCompleted: Bool
     var completedAt: Date?
     var isModified: Bool
     
-    init (date: Date, goal: String, isCompleted: Bool, completedAt: Date?, isModified: Bool) {
+    init (date: Date, title: String, isCompleted: Bool, completedAt: Date?, isModified: Bool) {
         self.date = date
-        self.goal = goal
+        self.title = title
         self.isCompleted = isCompleted
         self.completedAt = completedAt
         self.isModified = isModified
@@ -32,15 +32,15 @@ class GoalLog {
 
 @Model
 class ActiveGoal {
-    var goal: String
+    var title: String
     var createdAt: Date
     var isCompleted: Bool
     var completedAt: Date?
     var isModified: Bool
     var summaryShown: Bool
     
-    init(goal: String) {
-        self.goal = goal
+    init(title: String) {
+        self.title = title
         self.createdAt = .now
         self.isCompleted = false
         self.completedAt = nil
@@ -57,28 +57,28 @@ extension GoalLog {
     static let sampleData = [
         GoalLog(
             date: Date(),
-            goal: "Learn Swift",
+            title: "Learn Swift",
             isCompleted: true,
             completedAt: Date(),
             isModified: false
         ),
         GoalLog(
             date: Date(),
-            goal: "Get groceries",
+            title: "Get groceries",
             isCompleted: false,
             completedAt: nil,
             isModified: false
         ),
         GoalLog(
             date: Date(),
-            goal: "Finish english thesis essay and turn it in.",
+            title: "Finish english thesis essay and turn it in.",
             isCompleted: true,
             completedAt: Date(),
             isModified: true
         ),
         GoalLog(
             date: Date(),
-            goal: "Talk to my friends",
+            title: "Talk to my friends",
             isCompleted: true,
             completedAt: Date(),
             isModified: false

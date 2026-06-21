@@ -11,17 +11,18 @@ import SwiftData
 struct HistoryView: View {
     @Query(sort: \GoalLog.date) private var goals: [GoalLog]
     
+    
     var body: some View {
         NavigationStack {
-            if goals.isEmpty {
-                placeholder
-                    .navigationTitle("History")
-            } else {
-                logItems
-                    .navigationTitle("History")
+            Group {
+                if goals.isEmpty { placeholder }
+                else { logItems }
             }
+            .navigationTitle("History")
         }
     }
+    
+    // MARK: - Subviews
     
     private var logItems: some View {
         List {
@@ -53,5 +54,4 @@ struct HistoryView: View {
 
 #Preview {
     HistoryView()
-        .sampleDataContainer()
 }

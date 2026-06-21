@@ -9,27 +9,22 @@ import SwiftUI
 import SwiftData
 
 struct SetGoalView: View {
+    @Environment(StateManager.self) private var stateManager
     @Environment(DataContainer.self) private var data
     
     @Query private var activeGoals: [ActiveGoal]
     private var activeGoal: ActiveGoal? { activeGoals.first }
     
-    @State private var newGoal = ""
+    @State private var newTitle = ""
     @State private var isEditing = false
+    
     
     var body: some View {
         NavigationStack {
             VStack(alignment: .leading) {
-                Text("Starting in 9h")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .padding(.bottom, 50)
+                timeContext
                 
-                if isEditing {
-                    editField
-                } else {
-                    displayGoal
-                }
+                editField  // Dynamic input box
                 
                 Spacer()
             }
@@ -41,42 +36,61 @@ struct SetGoalView: View {
         }
         .onAppear {
             if let activeGoal {
-                newGoal = activeGoal.goal
+                newTitle = activeGoal.title
             }
         }
     }
     
-    private var editField: some View {
-        TextField(activeGoal != nil ? activeGoal!.goal : "Enter Goal", text: $newGoal)
-            .textFieldStyle(.roundedBorder)
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button(role: .confirm) {
-                        if let activeGoal {
-                            activeGoal.goal = newGoal
-                        } else {
-                            try? data.setNewActiveGoal(ActiveGoal(goal: newGoal))
-                        }
-                        isEditing = false
-                    }
-                }
-            }
+    // MARK: - Subviews
+    
+    private var timeContext: some View {
+        Text("Starting in \(stateManager.timeRemaining.hoursAndMinutes)")
+            .font(.subheadline)
+            .foregroundColor(.secondary)
+            .padding(.bottom, 50)
     }
     
-    private var displayGoal: some View {
-        Text(activeGoal != nil ? activeGoal!.goal : "No Goal Set")
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        isEditing = true
-                    } label: {
-                        Image(systemName: "pencil")
-                    }
-                }
+    private var editField: some View {
+        Group {
+            if isEditing {
+                TextField(activeGoal?.title ?? "Enter Goal", text: $newTitle)
+                    .textFieldStyle(.roundedBorder)
+            } else {
+                Text(activeGoal?.title ?? "No Goal Set")
             }
+        }
+        .toolbar {
+            if isEditing { confirmButton }
+            else { editButton }
+        }
+        
     }
-}
-
-#Preview {
-    // SetGoalView()
+    
+    // MARK: - Toolbar
+    
+    private var editButton: some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            Button {
+                isEditing = true
+            } label: {
+                Image(systemName: "pencil")
+            }
+        }
+    }
+    
+    private var confirmButton: some ToolbarContent {
+        ToolbarItem(placement: .confirmationAction) {
+            Button(role: .confirm) {
+                if newTitle == "" {
+                    try? data.clearCurrentActiveGoal()
+                }
+                else if let activeGoal {
+                    activeGoal.title = newTitle
+                } else {
+                    try? data.setNewActiveGoal(title: newTitle)
+                }
+                isEditing = false
+            }
+        }
+    }
 }

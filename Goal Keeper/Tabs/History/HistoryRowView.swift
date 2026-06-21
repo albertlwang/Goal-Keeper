@@ -10,6 +10,7 @@ import SwiftUI
 struct HistoryRowView: View {
     let goal: GoalLog
     
+    
     var body: some View {
         HStack(alignment: .top) {
             icon
@@ -18,10 +19,12 @@ struct HistoryRowView: View {
             
             Spacer()
             
-            Text(goal.goal)
+            Text(goal.title)
                 .multilineTextAlignment(.trailing)
         }
     }
+    
+    // MARK: - Computed Properties
     
     private var color: Color {
         if goal.isModified { return .yellow }

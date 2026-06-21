@@ -7,19 +7,16 @@
 
 import SwiftUI
 
+/// Parent view for the goal tab.
+/// Conditionally displays an active goal or allows goal setting, depending on the phase.
 struct GoalView: View {
     @Environment(StateManager.self) private var stateManager
     
+    
     var body: some View {
-        
         switch stateManager.currentPhase {
         case .active: TodaysGoalView()
         case .awaiting: SetGoalView()
         }
-        
     }
-}
-
-#Preview {
-    GoalView()
 }
