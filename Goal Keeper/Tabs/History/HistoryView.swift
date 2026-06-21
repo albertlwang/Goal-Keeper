@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 
 struct HistoryView: View {
-    @Query(sort: \GoalLog.date) private var logs: [GoalLog]
+    @Query(sort: \GoalLog.date, order: .reverse) private var logs: [GoalLog]
     
     
     var body: some View {
