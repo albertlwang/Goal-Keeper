@@ -64,7 +64,9 @@ extension StateManager {
             print("Transitioning to awaiting. SOD = \(nextSOD)")
         }
         
-        expireActiveGoal()
+        if DataContainer.shared.activeGoalIsExpired {
+            expireActiveGoal()
+        }
         
         currentPhase = next
         endTime = endsAt
@@ -106,7 +108,7 @@ extension StateManager {
 
 // MARK: - Helpers
 extension StateManager {
-    private var nextEOD: Date {
+    var nextEOD: Date {
         let components = AppSettings.shared.endOfDay
         
         return Calendar.current.nextDate(
@@ -116,7 +118,7 @@ extension StateManager {
         ) ?? .now
     }
     
-    private var nextSOD: Date {
+    var nextSOD: Date {
         let components = AppSettings.shared.startOfDay
         
         return Calendar.current.nextDate(

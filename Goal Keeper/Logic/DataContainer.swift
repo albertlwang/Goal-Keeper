@@ -45,6 +45,11 @@ class DataContainer {
         return try? context.fetch(descriptor).first
     }
     
+    var activeGoalIsExpired: Bool {
+        guard let activeGoal else { return false }
+        return Date.now > activeGoal.expiresAt
+    }
+    
     // Erases the current active goal from context.
     // Represents no active goal.
     func clearCurrentActiveGoal() throws {
@@ -54,10 +59,10 @@ class DataContainer {
     
     // Replaces the current active goal
     // given the title for a new one.
-    func setNewActiveGoal(title: String) throws {
+    func setNewActiveGoal(title: String, expiresAt: Date) throws {
         try clearCurrentActiveGoal()
         
-        let newActiveGoal = ActiveGoal(title: title)
+        let newActiveGoal = ActiveGoal(title: title, expiresAt: expiresAt)
         context.insert(newActiveGoal)
         
         try context.save()
@@ -65,11 +70,11 @@ class DataContainer {
     
     // Changes the title of a current active goal,
     // or creates a new goal with given title if none exists.
-    func modifyCurrentActiveGoal(title: String) {
+    func modifyCurrentActiveGoal(title: String, expiresAt: Date) {
         if let activeGoal {
             activeGoal.title = title
         } else {
-            try? setNewActiveGoal(title: title)
+            try? setNewActiveGoal(title: title, expiresAt: expiresAt)
         }
     }
 }

@@ -30,25 +30,6 @@ class GoalLog {
     }
 }
 
-@Model
-class ActiveGoal {
-    var title: String
-    var createdAt: Date
-    var isCompleted: Bool
-    var completedAt: Date?
-    var isModified: Bool
-    var summaryShown: Bool
-    
-    init(title: String) {
-        self.title = title
-        self.createdAt = .now
-        self.isCompleted = false
-        self.completedAt = nil
-        self.isModified = false
-        self.summaryShown = false
-    }
-}
-
 extension GoalLog {
     static let sample = sampleData[0]
     static let failedSample = sampleData[1]
