@@ -114,6 +114,7 @@ struct SettingsView: View {
                 print(
                     activeGoal.title,
                     activeGoal.createdAt,
+                    activeGoal.expiresAt,
                     activeGoal.isCompleted,
                     activeGoal.completedAt ?? "nil",
                     activeGoal.isModified,

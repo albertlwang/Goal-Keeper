@@ -29,4 +29,9 @@ class ActiveGoal {
         self.isModified = false
         self.summaryShown = false
     }
+    
+    var startsAt: Date {
+        // Return a Date 8h prior to expiresAt
+        Calendar.current.date(byAdding: .hour, value: -8, to: expiresAt) ?? .now
+    }
 }
