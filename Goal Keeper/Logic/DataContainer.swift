@@ -55,6 +55,7 @@ class DataContainer {
     func clearCurrentActiveGoal() throws {
         let existing = try context.fetch(FetchDescriptor<ActiveGoal>())
         existing.forEach { context.delete($0) }
+        try context.save()
     }
     
     // Replaces the current active goal
