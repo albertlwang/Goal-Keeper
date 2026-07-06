@@ -73,6 +73,7 @@ class DataContainer {
     func modifyCurrentActiveGoal(title: String, expiresAt: Date) {
         if let activeGoal {
             activeGoal.title = title
+            activeGoal.isModified = true
         } else {
             try? setNewActiveGoal(title: title, expiresAt: expiresAt)
         }
