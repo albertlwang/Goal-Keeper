@@ -17,6 +17,7 @@ struct SetGoalView: View {
     
     @State private var newTitle = ""
     @State private var isEditing = false
+    @FocusState private var inputIsFocused: Bool
     
     
     var body: some View {
@@ -55,6 +56,7 @@ struct SetGoalView: View {
             if isEditing {
                 TextField(activeGoal?.title ?? "Enter Goal", text: $newTitle)
                     .textFieldStyle(.roundedBorder)
+                    .focused($inputIsFocused)
             } else {
                 Text(activeGoal?.title ?? "No Goal Set")
             }
@@ -72,6 +74,7 @@ struct SetGoalView: View {
         ToolbarItem(placement: .topBarTrailing) {
             Button {
                 isEditing = true
+                inputIsFocused = true
             } label: {
                 Image(systemName: "pencil")
             }
@@ -89,6 +92,7 @@ struct SetGoalView: View {
                 } else {
                     try? data.setNewActiveGoal(title: newTitle, expiresAt: stateManager.nextEOD)
                 }
+                inputIsFocused = false
                 isEditing = false
             }
         }
