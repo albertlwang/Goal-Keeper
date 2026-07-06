@@ -93,14 +93,8 @@ extension StateManager {
     
     private func expireActiveGoal() {
         if let activeGoal = DataContainer.shared.activeGoal {
-            // Save a log to history
-            let newGoalLog = GoalLog (
-                date: activeGoal.startsAt,
-                title: activeGoal.title,
-                isCompleted: activeGoal.isCompleted,
-                completedAt: activeGoal.completedAt,
-                isModified: activeGoal.isModified
-            )
+            // Archive the active goal
+            let newGoalLog = GoalLog(from: activeGoal)
             try? DataContainer.shared.insertGoalLog(newGoalLog)
         }
         try? DataContainer.shared.clearCurrentActiveGoal()

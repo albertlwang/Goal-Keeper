@@ -8,12 +8,19 @@
 import Foundation
 import SwiftData
 
-/// Defines Goal object.
-/// This is what SwiftData stores for historical logs.
-/// Current active Goal = whatever goal that has date = Date() --> mutate throughout the day.
-/// ENFORCE: can only mutate active goal (historical logs should be static).
+/// An immutable historical record of a single day's goal.
+///
+/// `GoalLog` is the archival counterpart to ``ActiveGoal``: once a goal's day
+/// ends, its final state should be copied into a `GoalLog` entry and never
+/// mutated again.
 @Model
 class GoalLog {
+    /// Represents the calendar day this goal is associated with.
+    /// Used to show a calendar view of archived goals.
+    ///
+    /// Derived from ActiveGoal.startsAt = the moment the goal officially becomes active (SOD).
+    /// We use the goal's associated SOD because it should fall on the morning of the
+    /// day we want to display.
     var date: Date
     var title: String
     
@@ -21,48 +28,13 @@ class GoalLog {
     var completedAt: Date?
     var isModified: Bool
     
-    init (date: Date, title: String, isCompleted: Bool, completedAt: Date?, isModified: Bool) {
-        self.date = date
-        self.title = title
-        self.isCompleted = isCompleted
-        self.completedAt = completedAt
-        self.isModified = isModified
+    ///Creates a historical log entry. Typically constructed from
+    ///``ActiveGoal`` at the moment it expires.
+    init (from activeGoal: ActiveGoal) {
+        self.date = activeGoal.startsAt
+        self.title = activeGoal.title
+        self.isCompleted = activeGoal.isCompleted
+        self.completedAt = activeGoal.completedAt
+        self.isModified = activeGoal.isModified
     }
-}
-
-extension GoalLog {
-    static let sample = sampleData[0]
-    static let failedSample = sampleData[1]
-    static let modifiedSample = sampleData[2]
-    
-    static let sampleData = [
-        GoalLog(
-            date: Date(),
-            title: "Learn Swift",
-            isCompleted: true,
-            completedAt: Date(),
-            isModified: false
-        ),
-        GoalLog(
-            date: Date(),
-            title: "Get groceries",
-            isCompleted: false,
-            completedAt: nil,
-            isModified: false
-        ),
-        GoalLog(
-            date: Date(),
-            title: "Finish english thesis essay and turn it in.",
-            isCompleted: true,
-            completedAt: Date(),
-            isModified: true
-        ),
-        GoalLog(
-            date: Date(),
-            title: "Talk to my friends",
-            isCompleted: true,
-            completedAt: Date(),
-            isModified: false
-        )
-    ]
 }
