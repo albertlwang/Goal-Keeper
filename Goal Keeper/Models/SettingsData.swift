@@ -9,6 +9,10 @@ import Foundation
 
 /// User-configurable settings that determine when a "day" starts and ends
 /// for the purposes of goal tracking.
+///
+/// Settings changes intentionally do not take effect until the next
+/// awaiting/active cycle. Prevents a user mid-goal from extending
+/// their own deadlines.
 struct SettingsData: Codable {
     
     /// The wall-clock time at which the day ends (e.g. 22:00)

@@ -70,3 +70,12 @@ class ActiveGoal {
         summaryShown = true
     }
 }
+
+extension ActiveGoal: CustomStringConvertible {
+    /// Custom description for easy debug output
+    var description: String {
+        "ActiveGoal(title: \(title), createdAt: \(createdAt), expiresAt: \(expiresAt), " +
+        "isCompleted: \(isCompleted), completedAt: \(completedAt.map(String.init(describing:)) ?? "nil"), " +
+        "isModified: \(isModified), summaryShown: \(summaryShown))"
+    }
+}
