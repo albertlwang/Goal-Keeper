@@ -37,7 +37,3 @@ struct HistoryRowView: View {
             .foregroundColor(color)
     }
 }
-
-#Preview {
-    HistoryRowView(log: GoalLog.sample)
-}

@@ -16,12 +16,8 @@ struct FinishButton: View {
     
     var body: some View {
         Button {
-            // TODO: Move logic to DataContainer
-            if let activeGoal {
-                activeGoal.isCompleted = true
-                activeGoal.completedAt = .now
-                try? data.context.save()
-            }
+            
+            if let activeGoal { activeGoal.markCompleted() }
             
         } label: {
             VStack {

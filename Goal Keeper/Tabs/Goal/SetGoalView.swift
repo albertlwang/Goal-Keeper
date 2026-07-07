@@ -88,7 +88,7 @@ struct SetGoalView: View {
                     try? data.clearCurrentActiveGoal()
                 }
                 else if let activeGoal {
-                    activeGoal.title = newTitle
+                    activeGoal.updateTitle(newTitle)
                 } else {
                     try? data.setNewActiveGoal(title: newTitle, expiresAt: stateManager.nextEOD)
                 }

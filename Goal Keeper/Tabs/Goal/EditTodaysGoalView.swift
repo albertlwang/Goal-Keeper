@@ -66,7 +66,7 @@ struct EditTodaysGoalView: View {
     private var confirmButton: some ToolbarContent {
         ToolbarItem(placement: .confirmationAction) {
             Button(role: .confirm) {
-                data.modifyCurrentActiveGoal(title: newTitle, expiresAt: stateManager.nextEOD)
+                try? data.modifyCurrentActiveGoal(title: newTitle, expiresAt: stateManager.nextEOD)
                 dismiss()
             }
         }
