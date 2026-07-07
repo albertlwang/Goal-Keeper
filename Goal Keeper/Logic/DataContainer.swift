@@ -48,20 +48,19 @@ class DataContainer {
     
     /// Replaces the current active goal with a new one.
     func setNewActiveGoal(title: String, expiresAt: Date) throws {
-        try clearCurrentActiveGoal()
-        context.insert(ActiveGoal(title: title, expiresAt: expiresAt))
-        try context.save()
+        try insertNewActiveGoal(title: title, expiresAt: expiresAt, isModified: false)
     }
     
     /// Updates the title of the current active goal, or creates one if none exists.
     /// - Note:`expiresAt` is only used if a new goal must be created; it has
     /// no effect if an active goal already exists.
+    /// - Note: if no active goal exists, the newly created goal is marked modified.
     func modifyCurrentActiveGoal(title: String, expiresAt: Date) throws {
         if let activeGoal {
             activeGoal.updateTitle(title)
             try context.save()
         } else {
-            try setNewActiveGoal(title: title, expiresAt: expiresAt)
+            try insertNewActiveGoal(title: title, expiresAt: expiresAt, isModified: true)
         }
     }
     
@@ -92,6 +91,17 @@ class DataContainer {
         guard let activeGoal else { return }
         context.insert(GoalLog(from: activeGoal))
         context.delete(activeGoal)
+        try context.save()
+    }
+    
+    // MARK: - Private helpers
+    
+    /// Shared creation path for both a fresh goal and an after-the-fact one.
+    private func insertNewActiveGoal(title: String, expiresAt: Date, isModified: Bool) throws {
+        try clearCurrentActiveGoal()
+        let goal = ActiveGoal(title: title, expiresAt: expiresAt)
+        if isModified { goal.markModified() }
+        context.insert(goal)
         try context.save()
     }
 }

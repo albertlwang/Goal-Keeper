@@ -65,6 +65,10 @@ class ActiveGoal {
         isModified = true
     }
     
+    func markModified() {
+        isModified = true
+    }
+    
     /// Marks that the end-of-day summary has been presented for this goal.
     func markSummaryShown() {
         summaryShown = true
