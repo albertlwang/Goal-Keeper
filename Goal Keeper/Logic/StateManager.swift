@@ -25,7 +25,6 @@ final class StateManager {
     private init() {
         loadState()
         startClock()
-        // observeSettings()
     }
 }
 
@@ -50,23 +49,11 @@ extension StateManager {
     }
     
     private func updatePhase() {
-        print("Updating phase.")
-        let next: AppPhase
-        let endsAt: Date
-        
-        if inActiveWindow {
-            next = .active
-            endsAt = nextEOD
-            print("Transitioning to active. EOD = \(nextEOD)")
-        } else {
-            next = .awaiting
-            endsAt = nextSOD
-            print("Transitioning to awaiting. SOD = \(nextSOD)")
-        }
+        let next: AppPhase = inActiveWindow ? .active : .awaiting
+        let endsAt: Date = inActiveWindow ? nextEOD : nextSOD
         
         if DataContainer.shared.activeGoalIsExpired {
-            print("Active goal is expired—clearing active goal.")
-            expireActiveGoal()
+            try? DataContainer.shared.archiveExpiredActiveGoal()
         }
         
         currentPhase = next
@@ -90,47 +77,35 @@ extension StateManager {
             timeRemaining = remaining
         }
     }
-    
-    private func expireActiveGoal() {
-        if let activeGoal = DataContainer.shared.activeGoal {
-            // Archive the active goal
-            let newGoalLog = GoalLog(from: activeGoal)
-            try? DataContainer.shared.insertGoalLog(newGoalLog)
-        }
-        try? DataContainer.shared.clearCurrentActiveGoal()
-    }
 }
 
 // MARK: - Helpers
 extension StateManager {
     var nextEOD: Date {
-        let components = AppSettings.shared.endOfDay
-        
-        return Calendar.current.nextDate(
+        Calendar.current.nextDate(
             after: .now,
-            matching: components,
+            matching: AppSettings.shared.endOfDay,
             matchingPolicy: .nextTime
         ) ?? .now
     }
     
     var nextSOD: Date {
-        let components = AppSettings.shared.startOfDay
-        
-        return Calendar.current.nextDate(
+        Calendar.current.nextDate(
             after: .now,
-            matching: components,
+            matching: AppSettings.shared.startOfDay,
             matchingPolicy: .nextTime
         ) ?? .now
     }
     
-    
     private func timeIntervalSinceMidnight(from components: DateComponents) -> TimeInterval {
         let now = Date()
         let midnight = Calendar.current.startOfDay(for: now)
-        let target = Calendar.current.date(bySettingHour: components.hour ?? 0,
-                                           minute: components.minute ?? 0,
-                                           second: components.second ?? 0,
-                                           of: now) ?? midnight
+        let target = Calendar.current.date(
+            bySettingHour: components.hour ?? 0,
+            minute: components.minute ?? 0,
+            second: components.second ?? 0,
+            of: now
+        ) ?? midnight
         return target.timeIntervalSince(midnight)
     }
     
