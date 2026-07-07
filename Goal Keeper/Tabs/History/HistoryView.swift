@@ -8,6 +8,9 @@
 import SwiftUI
 import SwiftData
 
+/// Parent view for the History tab.
+/// Provides interface to access all archived goals by date and
+/// view relevant details.
 struct HistoryView: View {
     @Query(sort: \GoalLog.date, order: .reverse) private var logs: [GoalLog]
     

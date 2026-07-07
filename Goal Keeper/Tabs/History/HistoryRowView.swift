@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// Summary row view for each archived goal.
 struct HistoryRowView: View {
     let log: GoalLog
     
