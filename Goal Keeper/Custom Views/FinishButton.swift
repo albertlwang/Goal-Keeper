@@ -9,10 +9,8 @@ import SwiftUI
 import SwiftData
 
 struct FinishButton: View {
-    @Environment(DataContainer.self) private var data
-    @Query private var activeGoals: [ActiveGoal]
+    let activeGoal: ActiveGoal?
     
-    private var activeGoal: ActiveGoal? { activeGoals.first }
     
     var body: some View {
         Button {

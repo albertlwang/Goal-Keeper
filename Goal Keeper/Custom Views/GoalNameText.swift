@@ -9,17 +9,20 @@ import SwiftUI
 import SwiftData
 
 struct GoalNameText: View {
-    @Query private var activeGoals: [ActiveGoal]
+    let activeGoal: ActiveGoal?
     
-    private var activeGoal: ActiveGoal? { activeGoals.first }
     
     var body: some View {
         if let activeGoal {
             Text(activeGoal.title)
                 .fontWeight(.medium)
-                .padding(.bottom, 20)
                 .strikethrough(activeGoal.isCompleted)
                 .foregroundColor(activeGoal.isCompleted ? .green : .primary)
+            
+            isModifiedTag
+                .opacity(activeGoal.isModified ? 1 : 0)
+                .padding(.bottom, 20)
+                .padding(.top, 5)
         } else {
             Text("No goal set yet.")
                 .fontWeight(.medium)
@@ -27,8 +30,13 @@ struct GoalNameText: View {
                 .foregroundColor(.primary.opacity(0.5))
         }
     }
-}
-
-#Preview {
-    GoalNameText()
+    
+    // MARK: - Subviews
+    
+    private var isModifiedTag: some View {
+        Text("(edited)")
+            .font(.caption)
+            .foregroundColor(.secondary)
+            .italic(true)
+    }
 }

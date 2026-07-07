@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// Shows full details of an archived goal.
 struct LogDetailView: View {
     let log: GoalLog
     
