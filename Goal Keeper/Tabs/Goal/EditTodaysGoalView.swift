@@ -37,12 +37,15 @@ struct EditTodaysGoalView: View {
     
     private var goalInput: some View {
         VStack(alignment: .leading) {
-            TextField(activeGoal?.title ?? "Enter title", text: $newTitle)
+            TextField("Enter title", text: $newTitle)
                 .textFieldStyle(.roundedBorder)
             Spacer()
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 20)
+        .onAppear {
+            if let activeGoal { newTitle = activeGoal.title }
+        }
     }
     
     // MARK: - Toolbar
@@ -66,7 +69,10 @@ struct EditTodaysGoalView: View {
     private var confirmButton: some ToolbarContent {
         ToolbarItem(placement: .confirmationAction) {
             Button(role: .confirm) {
-                try? data.modifyCurrentActiveGoal(title: newTitle, expiresAt: stateManager.nextEOD)
+                if activeGoal?.title != newTitle {
+                    /// Don't modify if the title is the same as before.
+                    try? data.modifyCurrentActiveGoal(title: newTitle, expiresAt: stateManager.nextEOD)
+                }
                 dismiss()
             }
         }
