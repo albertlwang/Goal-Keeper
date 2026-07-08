@@ -90,7 +90,7 @@ struct SetGoalView: View {
                 else if let activeGoal {
                     activeGoal.updateTitle(newTitle)
                 } else {
-                    try? data.setNewActiveGoal(title: newTitle, expiresAt: stateManager.nextEOD)
+                    try? data.setNewActiveGoal(title: newTitle)
                 }
                 inputIsFocused = false
                 isEditing = false

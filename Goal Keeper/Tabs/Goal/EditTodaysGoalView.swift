@@ -11,7 +11,6 @@ import SwiftData
 /// Handles modifications to the current active goal.
 /// Presented as a sheet.
 struct EditTodaysGoalView: View {
-    @Environment(StateManager.self) private var stateManager
     @Environment(DataContainer.self) private var data
     @Environment(\.dismiss) private var dismiss
     
@@ -71,7 +70,7 @@ struct EditTodaysGoalView: View {
             Button(role: .confirm) {
                 if activeGoal?.title != newTitle {
                     /// Don't modify if the title is the same as before.
-                    try? data.modifyCurrentActiveGoal(title: newTitle, expiresAt: stateManager.nextEOD)
+                    try? data.modifyCurrentActiveGoal(title: newTitle)
                 }
                 dismiss()
             }
