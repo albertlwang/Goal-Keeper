@@ -54,9 +54,12 @@ struct SetGoalView: View {
     private var editField: some View {
         Group {
             if isEditing {
-                TextField(activeGoal?.title ?? "Enter Goal", text: $newTitle)
+                TextField("Enter Goal", text: $newTitle)
                     .textFieldStyle(.roundedBorder)
                     .focused($inputIsFocused)
+                    .onAppear {
+                        if let activeGoal { newTitle = activeGoal.title }
+                    }
             } else {
                 Text(activeGoal?.title ?? "No Goal Set")
             }
@@ -65,7 +68,6 @@ struct SetGoalView: View {
             if isEditing { confirmButton }
             else { editButton }
         }
-        
     }
     
     // MARK: - Toolbar
@@ -86,10 +88,8 @@ struct SetGoalView: View {
             Button(role: .confirm) {
                 if newTitle == "" {
                     try? data.clearCurrentActiveGoal()
-                }
-                else if let activeGoal {
-                    activeGoal.updateTitle(newTitle)
-                } else {
+                } else if activeGoal?.title != newTitle {
+                    /// Don't create new goal if it's the same as before.
                     try? data.setNewActiveGoal(title: newTitle)
                 }
                 inputIsFocused = false
