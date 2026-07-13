@@ -9,6 +9,7 @@ import Foundation
 
 @Observable
 final class AppSettings {
+    
     static let shared = AppSettings()
     
     private static let key = "appSettings"
@@ -36,7 +37,6 @@ final class AppSettings {
     var startOfDay: DateComponents {
         get { data.startOfDay }
     }
-    
     
     // MARK: - Private Functions
     

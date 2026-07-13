@@ -20,13 +20,13 @@ struct TodaysGoalView: View {
     
     var body: some View {
         NavigationStack {
-            /// Content
+
             VStack(alignment: .leading) {
                 dateContext
                 
                 Spacer()
                 
-                GoalNameText()
+                GoalNameText(activeGoal: activeGoal)
                 
                 Spacer()
                 
@@ -56,7 +56,7 @@ struct TodaysGoalView: View {
         HStack {
             Spacer()
             VStack {
-                FinishButton()
+                FinishButton(activeGoal: activeGoal)
                 Text("\(stateManager.timeRemaining.hoursAndMinutes) left")
                     .font(.caption)
                     .foregroundColor(.secondary.opacity(

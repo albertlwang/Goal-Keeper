@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// Summary row view for each archived goal.
 struct HistoryRowView: View {
     let log: GoalLog
     
@@ -36,8 +37,4 @@ struct HistoryRowView: View {
         Image(systemName: log.isCompleted ? "checkmark" : "xmark")
             .foregroundColor(color)
     }
-}
-
-#Preview {
-    HistoryRowView(log: GoalLog.sample)
 }

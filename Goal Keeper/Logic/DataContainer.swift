@@ -30,52 +30,78 @@ class DataContainer {
         
     }
     
-    // MARK: - Interface
+    // MARK: - Queries
     
-    // Add a new GoalLog entry to the history.
-    func insertGoalLog(_ newGoal: GoalLog) throws {
-        context.insert(newGoal)
-        try context.save()
-    }
-    
-    // Returns the current active goal
-    // or nil if there is none.
+    /// The current active goal, or `nil` if there is none.
     var activeGoal: ActiveGoal? {
         let descriptor = FetchDescriptor<ActiveGoal>()
         return try? context.fetch(descriptor).first
     }
     
+    /// Whether the active goal's day has ended.
     var activeGoalIsExpired: Bool {
         guard let activeGoal else { return false }
         return Date.now > activeGoal.expiresAt
     }
     
-    // Erases the current active goal from context.
-    // Represents no active goal.
-    func clearCurrentActiveGoal() throws {
-        let existing = try context.fetch(FetchDescriptor<ActiveGoal>())
-        existing.forEach { context.delete($0) }
+    // MARK: - Active goal lifecycle
+    
+    /// Replaces the current active goal with a new one.
+    func setNewActiveGoal(title: String) throws {
+        try insertNewActiveGoal(title: title, isModified: false)
     }
     
-    // Replaces the current active goal
-    // given the title for a new one.
-    func setNewActiveGoal(title: String, expiresAt: Date) throws {
-        try clearCurrentActiveGoal()
-        
-        let newActiveGoal = ActiveGoal(title: title, expiresAt: expiresAt)
-        context.insert(newActiveGoal)
-        
+    /// Updates the title of the current active goal, or creates one if none exists.
+    /// - Note:`expiresAt` is only used if a new goal must be created; it has
+    /// no effect if an active goal already exists.
+    /// - Note: if no active goal exists, the newly created goal is marked modified.
+    func modifyCurrentActiveGoal(title: String) throws {
+        if let activeGoal {
+            activeGoal.updateTitle(title)
+            try context.save()
+        } else {
+            try insertNewActiveGoal(title: title, isModified: true)
+        }
+    }
+    
+    /// Marks the current active goal completed. No-op if there is none.
+    func completeActiveGoal() throws {
+        activeGoal?.markCompleted()
         try context.save()
     }
     
-    // Changes the title of a current active goal,
-    // or creates a new goal with given title if none exists.
-    func modifyCurrentActiveGoal(title: String, expiresAt: Date) {
-        if let activeGoal {
-            activeGoal.title = title
-            activeGoal.isModified = true
-        } else {
-            try? setNewActiveGoal(title: title, expiresAt: expiresAt)
-        }
+    /// Marks the current active goal incomplete. No-op if there is none.
+    func uncompleteActiveGoal() throws {
+        activeGoal?.markIncomplete()
+        try context.save()
+    }
+    
+    /// Deletes the current active goal without archiving it.
+    /// - Warning: This is destructive with no history retained. Prefer
+    /// ``archiveExpiredActiveGoal()`` unless specifically meaning to discard.
+    func clearCurrentActiveGoal() throws {
+        let existing = try context.fetch(FetchDescriptor<ActiveGoal>())
+        existing.forEach { context.delete($0) }
+        try context.save()
+    }
+    
+    /// Archives the current active goal into `GoalLog` history and clears it,
+    /// as a single atomic operation. No-op if no active goal.
+    func archiveExpiredActiveGoal() throws {
+        guard let activeGoal else { return }
+        context.insert(GoalLog(from: activeGoal))
+        context.delete(activeGoal)
+        try context.save()
+    }
+    
+    // MARK: - Private helpers
+    
+    /// Shared creation path for both a fresh goal and an after-the-fact one.
+    private func insertNewActiveGoal(title: String, isModified: Bool) throws {
+        try clearCurrentActiveGoal()
+        let goal = ActiveGoal(title: title, expiresAt: StateManager.shared.nextEOD)
+        if isModified { goal.markModified() }
+        context.insert(goal)
+        try context.save()
     }
 }

@@ -9,19 +9,13 @@ import SwiftUI
 import SwiftData
 
 struct FinishButton: View {
-    @Environment(DataContainer.self) private var data
-    @Query private var activeGoals: [ActiveGoal]
+    let activeGoal: ActiveGoal?
     
-    private var activeGoal: ActiveGoal? { activeGoals.first }
     
     var body: some View {
         Button {
-            // TODO: Move logic to DataContainer
-            if let activeGoal {
-                activeGoal.isCompleted = true
-                activeGoal.completedAt = .now
-                try? data.context.save()
-            }
+            
+            if let activeGoal { activeGoal.markCompleted() }
             
         } label: {
             VStack {

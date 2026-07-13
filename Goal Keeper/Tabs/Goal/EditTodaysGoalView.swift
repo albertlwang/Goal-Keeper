@@ -11,7 +11,6 @@ import SwiftData
 /// Handles modifications to the current active goal.
 /// Presented as a sheet.
 struct EditTodaysGoalView: View {
-    @Environment(StateManager.self) private var stateManager
     @Environment(DataContainer.self) private var data
     @Environment(\.dismiss) private var dismiss
     
@@ -37,12 +36,15 @@ struct EditTodaysGoalView: View {
     
     private var goalInput: some View {
         VStack(alignment: .leading) {
-            TextField(activeGoal?.title ?? "Enter title", text: $newTitle)
+            TextField("Enter title", text: $newTitle)
                 .textFieldStyle(.roundedBorder)
             Spacer()
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 20)
+        .onAppear {
+            if let activeGoal { newTitle = activeGoal.title }
+        }
     }
     
     // MARK: - Toolbar
@@ -66,7 +68,10 @@ struct EditTodaysGoalView: View {
     private var confirmButton: some ToolbarContent {
         ToolbarItem(placement: .confirmationAction) {
             Button(role: .confirm) {
-                data.modifyCurrentActiveGoal(title: newTitle, expiresAt: stateManager.nextEOD)
+                if activeGoal?.title != newTitle {
+                    /// Don't modify if the title is the same as before.
+                    try? data.modifyCurrentActiveGoal(title: newTitle)
+                }
                 dismiss()
             }
         }

@@ -18,15 +18,11 @@ struct SettingsView: View {
         UIDatePicker.appearance().minuteInterval = 15
     }
     
-    
     var body: some View {
-        // TODO: Show warning when modifying EOD to be in the past
-        
         NavigationStack {
             VStack {
                 List {
                     eodEditor
-                    
                     if isEditingEOD { datePicker }
                     
                     sodDisplayer
@@ -45,7 +41,7 @@ struct SettingsView: View {
     
     private var eodEditor: some View {
         HStack {
-            Text("Day end time")
+            Text("Day End Time")
             Spacer()
             Button {
                 eodDraft = settings.endOfDayAsDate
@@ -71,7 +67,7 @@ struct SettingsView: View {
                 Button("Cancel") {
                     withAnimation { isEditingEOD = false }
                 }
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.red)
                 .buttonStyle(.plain)
                 
                 Spacer()
@@ -98,11 +94,15 @@ struct SettingsView: View {
         }
     }
     
-    // MARK: - Debug buttons
-    
+    // MARK: - Debug Buttons
+    #if DEBUG
     private var clearActiveGoalButton: some View {
         Button("Clear active goal") {
-            try? data.clearCurrentActiveGoal()
+            do {
+                try data.clearCurrentActiveGoal()
+            } catch {
+                print("Failed to clear active goal: ", error)
+            }
         }
         .buttonStyle(.plain)
         .foregroundColor(.accentColor)
@@ -111,20 +111,13 @@ struct SettingsView: View {
     private var printActiveGoalButton: some View {
         Button("Print active goal") {
             if let activeGoal = data.activeGoal {
-                print(
-                    activeGoal.title,
-                    activeGoal.createdAt,
-                    activeGoal.expiresAt,
-                    activeGoal.isCompleted,
-                    activeGoal.completedAt ?? "nil",
-                    activeGoal.isModified,
-                    activeGoal.summaryShown
-                )
+                print(activeGoal)
             }
         }
         .buttonStyle(.plain)
         .foregroundColor(.accentColor)
     }
+    #endif
 }
 
 #Preview {
